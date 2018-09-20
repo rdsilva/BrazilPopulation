@@ -1965,14 +1965,50 @@ brasil &lt;- brasil %&gt;%
 <p>Renaming columns</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
+# Location
 names(brasil)[1] &lt;- 'code'
 names(brasil)[2] &lt;- 'city'
 names(brasil)[3] &lt;- 'state'
 names(brasil)[4] &lt;- 'abbreviation'
 names(brasil)[5] &lt;- 'region'
 names(brasil)[6] &lt;- 'lat'
-names(brasil)[7] &lt;- 'long'</code></pre>
+names(brasil)[7] &lt;- 'long'
+
+# Population
+names(populacao)[1] &lt;- 'code'
+names(populacao)[2] &lt;- 'year'
+names(populacao)[3] &lt;- 'population'</code></pre>
 </div>
+<p>The <em>code</em> about municipalities used to have 7 digits, the 7th digit was necessary to verify the code, so as we don’t use it anymore I’ll cut it out from the data.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+brasil$code &lt;- substr(as.character(brasil$code),1,6)</code></pre>
+</div>
+<p>Other thing is bothering me is the name <em>REGIAO</em> in the <em>region</em> column, I gonna take it out too.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+brasil$region &lt;- substr(as.character(brasil$region), 8, 20)</code></pre>
+</div>
+<h2 id="merging-data-about-population-with-data-about-location">Merging data about population with data about location</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+resultado &lt;- merge(brasil, populacao, all.x = TRUE)</code></pre>
+</div>
+<h2 id="spreading-the-result-to-better-viewing">Spreading the result to better viewing</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+library(tidyr)
+
+resultado_horizontal &lt;- spread(resultado, year, population)</code></pre>
+</div>
+<h2 id="exporting-results">Exporting results</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+write.csv2(resultado, &quot;brazil-population-2012-2017.csv&quot;, row.names = FALSE)
+
+write.csv2(resultado_horizontal, &quot;brazil-population-2012-2017-spread.csv&quot;, row.names = FALSE)</code></pre>
+</div>
+<p>ASAP I’ll continue improving this dataset! I really hope you enjoy this!</p>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

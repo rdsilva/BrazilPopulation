@@ -79,25 +79,25 @@ names(populacao)[3] <- 'population'
 
 The *code* about municipalities used to have 7 digits, the 7th digit was necessary to verify the code, so as we don't use it anymore I'll cut it out from the data. 
 
-```{r}
+```{r remove digit verification, eval=FALSE, warning=FALSE, echo=TRUE}
 brasil$code <- substr(as.character(brasil$code),1,6)
 ```
 
 Other thing is bothering me is the name *REGIAO* in the *region* column, I gonna take it out too. 
 
-```{r}
+```{r remove name regiao, eval=FALSE, warning=FALSE, echo=TRUE}
 brasil$region <- substr(as.character(brasil$region), 8, 20)
 ```
 
 ## Merging data about population with data about location
 
-```{r}
+```{r generating result, eval=FALSE, warning=FALSE, echo=TRUE}
 resultado <- merge(brasil, populacao, all.x = TRUE)
 ```
 
 ## Spreading the result to better viewing
 
-```{r}
+```{r spreading results, eval=FALSE, warning=FALSE, echo=TRUE}
 
 library(tidyr)
 
@@ -107,13 +107,14 @@ resultado_horizontal <- spread(resultado, year, population)
 
 ## Exporting results
 
-```{r}
+```{r exporting results, eval=FALSE, warning=FALSE, echo=TRUE}
 write.csv2(resultado, "brazil-population-2012-2017.csv", row.names = FALSE)
 
 write.csv2(resultado_horizontal, "brazil-population-2012-2017-spread.csv", row.names = FALSE)
 ```
 
-
+ASAP I'll continue improving this dataset!
+I really hope you enjoy this!
 
 
 
