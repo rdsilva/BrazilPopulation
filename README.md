@@ -34,7 +34,7 @@ regioes <- read.csv2('UF-Regiões.csv', header = TRUE)
 
 ```
 
-Mergind data about location
+Merging data about location
 
 ```{r merging location, eval=FALSE, warning=FALSE, echo=TRUE}
 names(municipios)[3] <- 'CO_UF'
