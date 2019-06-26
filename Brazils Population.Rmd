@@ -150,6 +150,50 @@ write.csv2(resultado, "brazil-population-2012-2017.csv", row.names = FALSE)
 # write.csv2(resultado_horizontal, "brazil-population-2012-2017-spread.csv", row.names = FALSE)
 ```
 
+## Corrigindo a tabela municipios e regiões
+
+Havia um erro nos codigos dos municipios na tabela original que listava as regiões de cada estado... irei agora corrigir isso.
+
+```{r}
+head(municipios)
+```
+
+```{r}
+head(regioes)
+```
+
+```{r}
+head(brasil)
+```
+
+```{r}
+regioes <- municipios %>%
+  distinct(Código.UF, UF, Estado)
+```
+
+```{r}
+tmp_regioes <- brasil %>%
+  distinct(abbreviation, state, region)
+```
+
+```{r}
+regioes <- merge(regioes, tmp_regioes, by.x = 'UF', by.y = 'abbreviation')
+```
+
+```{r}
+regioes <- regioes %>% select(UF, Código.UF, Estado, region)
+
+names(regioes)[1] <- 'abbreviation'
+names(regioes)[2] <- 'code'
+names(regioes)[3] <- 'state'
+names(regioes)[4] <- 'region'
+```
+
+```{r}
+write.csv2(regioes, 'UF-Regiões.csv',row.names = FALSE)
+```
+
+
 ASAP I'll continue improving this dataset!
 I really hope you enjoy this!
 
