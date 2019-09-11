@@ -17,20 +17,33 @@ knitr::opts_chunk$set(echo = FALSE)
 
 The goal of this project is just create a dataset about Brazil's population from the last 20 years to make easy any demographic processing. All the data was obtained from IBGE (Brazilian Institute of Geography and Statistics) and TCU (Federal General Accounting Office).
 
-```{r libraries, eval=FALSE, echo=TRUE, warning=FALSE}
+```{r libraries, eval=FALSE, echo=FALSE, warning=FALSE}
 library(foreign)
 library(dplyr)
 ```
 
 ```{r merging population, eval=FALSE, warning=FALSE, echo=TRUE}
-setwd('./Data')
 
-files <- list.files(pattern = '.DBF')
+files <- list.files(path = 'dados/', pattern = '.DBF', full.names = T)
 
 myfiles <- lapply(files, read.dbf)
 
 populacao <- do.call(rbind, myfiles)
 ```
+
+Os dados de 1996 não estão disponíveis originalmente na base de dados do IBGE e/ou TCU. Neste ano foi aplicado uma metodologia diferente de contagem populacional, o que gerou um resultado a parte. No entanto depois de algumas pesquisas foi possível encontrar a extratificação por municipio.
+
+```{r}
+pop_96 <- read.csv2('Data/POPTBR96.csv', header = T)
+
+pop_96$MUNIC_RES <- as.character(pop_96$MUNIC_RES)
+pop_96$ANO <- as.character(pop_96$ANO)
+```
+
+```{r}
+populacao <- rbind(populacao, pop_96)
+```
+
 
 ## Nomenclature of municipalities and regions
 
@@ -75,7 +88,7 @@ Filtering for the desired parameters
 
 ```{r filtering parameters, eval=FALSE, warning=FALSE, echo=TRUE}
 brasil <- brasil %>%
-  select(Código.IBGE, Nome.do.Município, Estado.x, UF, NO_REGIAO, Latitude, Longitude)
+  select(Código.IBGE, Nome.do.Município, Estado, UF, region, Latitude, Longitude)
 ```
 
 Renaming columns
@@ -147,7 +160,7 @@ resultado_horizontal <- spread(resultado, year, population)
 ```{r exporting results, eval=FALSE, warning=FALSE, echo=TRUE}
 write.csv2(resultado, "brazil-population-2012-2017.csv", row.names = FALSE)
 
-# write.csv2(resultado_horizontal, "brazil-population-2012-2017-spread.csv", row.names = FALSE)
+write.csv2(resultado_horizontal, "brazil-population-2012-2017-spread.csv", row.names = FALSE)
 ```
 
 ## Corrigindo a tabela municipios e regiões
@@ -196,5 +209,26 @@ write.csv2(regioes, 'UF-Regiões.csv',row.names = FALSE)
 
 ASAP I'll continue improving this dataset!
 I really hope you enjoy this!
+
+
+```{r}
+# exportando os municipios do Brasil com os seguintes parametros
+# codigo_ibge, cidade, estado, região, país
+
+brasil_tmp <- brasil %>%
+  select(code, city, state, region)
+
+brasil_tmp$pais <- 'Brasil'
+
+names(brasil_tmp)[1] <- 'id_municipio'
+names(brasil_tmp)[2] <- 'cidade'
+names(brasil_tmp)[3] <- 'estado'
+names(brasil_tmp)[4] <- 'regiao'
+```
+
+```{r}
+write.csv2(brasil_tmp, 'brasil.csv', row.names = F)
+```
+
 
 
