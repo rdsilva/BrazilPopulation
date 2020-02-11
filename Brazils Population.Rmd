@@ -66,7 +66,7 @@ summary(regioes)
 ```
 
 ```{r}
-names(regioes)[2] <- 'UF'
+names(regioes)[1] <- 'UF'
 ```
 
 
@@ -74,7 +74,7 @@ names(regioes)[2] <- 'UF'
 Merging data about location
 
 ```{r merging location, eval=FALSE, warning=FALSE, echo=TRUE}
-names(municipios)[3] <- 'CO_UF'
+# names(municipios)[3] <- 'CO_UF'
 
 brasil <- merge(municipios, regioes, by = 'UF', all.x = TRUE)
 ```
@@ -131,7 +131,7 @@ summary(brasil)
 Other thing is bothering me is the name *REGIAO* in the *region* column, I gonna take it out too. 
 
 ```{r remove name regiao, eval=FALSE, warning=FALSE, echo=TRUE}
-brasil$region <- substr(as.character(brasil$region), 8, 20)
+# brasil$region <- substr(as.character(brasil$region), 8, 20)
 ```
 
 ## Merging data about population with data about location
@@ -155,12 +155,17 @@ resultado_horizontal <- spread(resultado, year, population)
 
 ```
 
+```{r}
+summary(resultado_horizontal)
+```
+
+
 ## Exporting results
 
 ```{r exporting results, eval=FALSE, warning=FALSE, echo=TRUE}
-write.csv2(resultado, "brazil-population-2012-2017.csv", row.names = FALSE)
+write.csv2(resultado, "brazil-population-1992-2017.csv", row.names = FALSE)
 
-write.csv2(resultado_horizontal, "brazil-population-2012-2017-spread.csv", row.names = FALSE)
+write.csv2(resultado_horizontal, "brazil-population-1992-2017-spread.csv", row.names = FALSE)
 ```
 
 ## Corrigindo a tabela municipios e regiões
@@ -230,5 +235,45 @@ names(brasil_tmp)[4] <- 'regiao'
 write.csv2(brasil_tmp, 'brasil.csv', row.names = F)
 ```
 
+# Adicionando 2018
 
+```{r}
+ano_18 <- read.dbf("Data/POPTBR18.dbf")
+```
+
+```{r}
+ano_18 <- ano_18 %>%
+  select(MUNIC_RES, ANO, POPULACAO)
+```
+
+```{r}
+ano_18 <- droplevels(ano_18)
+```
+
+```{r}
+names(ano_18)[1] <- "code"
+names(ano_18)[2] <- "year"
+names(ano_18)[3] <- "population"
+```
+
+```{r}
+ano_18$code <- substr(ano_18$code, 1, 6)
+```
+
+```{r}
+res_18 <- merge(ano_18, brasil, by = "code", all.x = T)
+```
+
+```{r}
+res_18 <- res_18 %>%
+  select("code","city","state","abbreviation","region","lat","long","year","population")
+```
+
+```{r}
+resultado_18 <- rbind(resultado, res_18)
+```
+
+```{r}
+write.csv2(resultado_18, "brazil-population-1992-2018.csv", row.names = FALSE)
+```
 
