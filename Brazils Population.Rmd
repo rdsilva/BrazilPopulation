@@ -235,45 +235,45 @@ names(brasil_tmp)[4] <- 'regiao'
 write.csv2(brasil_tmp, 'brasil.csv', row.names = F)
 ```
 
-# Adicionando 2018
+# Adicionando 2019
 
 ```{r}
-ano_18 <- read.dbf("Data/POPTBR18.dbf")
+ano_19 <- read.dbf("Data/POPTBR19.dbf")
 ```
 
 ```{r}
-ano_18 <- ano_18 %>%
+ano_19 <- ano_19 %>%
   select(MUNIC_RES, ANO, POPULACAO)
 ```
 
 ```{r}
-ano_18 <- droplevels(ano_18)
+ano_19 <- droplevels(ano_19)
 ```
 
 ```{r}
-names(ano_18)[1] <- "code"
-names(ano_18)[2] <- "year"
-names(ano_18)[3] <- "population"
+names(ano_19)[1] <- "code"
+names(ano_19)[2] <- "year"
+names(ano_19)[3] <- "population"
 ```
 
 ```{r}
-ano_18$code <- substr(ano_18$code, 1, 6)
+ano_19$code <- substr(ano_19$code, 1, 6)
 ```
 
 ```{r}
-res_18 <- merge(ano_18, brasil, by = "code", all.x = T)
+res_19 <- merge(ano_19, brasil, by = "code", all.x = T)
 ```
 
 ```{r}
-res_18 <- res_18 %>%
+res_19 <- res_19 %>%
   select("code","city","state","abbreviation","region","lat","long","year","population")
 ```
 
 ```{r}
-resultado_18 <- rbind(resultado, res_18)
+resultado_19 <- rbind(resultado, res_19)
 ```
 
 ```{r}
-write.csv2(resultado_18, "brazil-population-1992-2018.csv", row.names = FALSE)
+write.csv2(resultado_19, "brazil-population-1992-2019.csv", row.names = FALSE)
 ```
 
